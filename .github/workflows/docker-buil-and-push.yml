@@ -28,10 +28,10 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Lint with pycodestyle
         run: |
-          pycodestyle src test
+          pycodestyle src/server test
       - name: Test with pytest
         run: |
-          PYTHONPATH=./:./src/ pytest test
+          PYTHONPATH=./:./src/server pytest test
 
   push-image-to-docker-hub:
     needs: tests

@@ -7,7 +7,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import requests
 
-auth_url = "http://auth_server:8500"
 
 class Instance(BaseModel):
     cylinders: int
@@ -17,6 +16,7 @@ class Instance(BaseModel):
     acceleration: float
     model_year: int
     origin: int
+
 
 app = FastAPI()
 
@@ -28,10 +28,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+auth_url = "http://auth_server:8500"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=auth_url + "/token")
 model_path = "models/pipeline.pkl"
 if model_path is None:
     raise ValueError("The environment variable $MODEL_PATH is empty!")
+
 
 async def check_token(token: str = Depends(oauth2_scheme)):
     post_response = requests.post(auth_url + "/get_user?token=" + token)
@@ -43,13 +45,16 @@ async def check_token(token: str = Depends(oauth2_scheme)):
         )
     return post_response.json()
 
+
 @app.get("/healthcheck")
 def healthcheck() -> dict[str, str]:
     return {"status": "ok"}
-    
+
+
 @app.get("/users/me")
 async def read_users_me(current_user: str = Depends(check_token)):
     return current_user
+
 
 @app.post("/predictions")
 async def predictions(instance: Instance,

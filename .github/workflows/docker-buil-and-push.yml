@@ -28,7 +28,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Lint with pycodestyle
         run: |
-          pycodestyle src/server test
+          pycodestyle src/server src/auth test
       - name: Test with pytest
         run: |
           PYTHONPATH=./:./src/server pytest test

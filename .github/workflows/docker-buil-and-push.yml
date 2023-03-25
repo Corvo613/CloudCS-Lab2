@@ -17,7 +17,19 @@ jobs:
       run: docker build . --file AuthDockerfile --tag $DOCKER_USER/$REPO_NAME:auth_server
     - name: Build the Docker server image # push The image to the docker hub
       run: docker build . --file ServerDockerfile --tag $DOCKER_USER/$REPO_NAME:server
-    - name: Docker Push
-      run: docker push $DOCKER_USER/$REPO_NAME:auth_server
-    - name: Docker Push
-      run: docker push $DOCKER_USER/$REPO_NAME:server
+    -
+      name: Build and push
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./AuthDockerfile
+        push: true
+        tags: '${{ $REPO_NAME }}:auth_server'
+    -
+      name: Build and push
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./ServerDockerfile
+        push: true
+        tags: '${{ $REPO_NAME }}:server'

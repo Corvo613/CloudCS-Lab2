@@ -32,4 +32,4 @@ jobs:
         context: .
         file: ./ServerDockerfile
         push: true
-        tags: '${{ $DOCKERHUB_REPO }}:server'
+        tags: '${{ secrets.DOCKERHUB_REPO }}:server'

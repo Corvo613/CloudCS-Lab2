@@ -14,9 +14,9 @@ jobs:
       run: | # log into docker hub account
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD  
     - name: Build the Docker auth image # push The image to the docker hub
-      run: docker build . --file AuthDockerfile --tag $DOCKER_USER/$REPO_NAME:auth_server
+      run: docker build . --file AuthDockerfile --tag $REPO_NAME:auth_server
     - name: Build the Docker server image # push The image to the docker hub
-      run: docker build . --file ServerDockerfile --tag $DOCKER_USER/$REPO_NAME:server
+      run: docker build . --file ServerDockerfile --tag $REPO_NAME:server
     -
       name: Build and push
       uses: docker/build-push-action@v2
@@ -24,7 +24,7 @@ jobs:
         context: .
         file: ./AuthDockerfile
         push: true
-        tags: '${{ $DOCKERHUB_REPO }}:auth_server'
+        tags: '$REPO_NAME:auth_server'
     -
       name: Build and push
       uses: docker/build-push-action@v2
@@ -32,4 +32,4 @@ jobs:
         context: .
         file: ./ServerDockerfile
         push: true
-        tags: '${{ secrets.DOCKERHUB_REPO }}:server'
+        tags: '$REPO_NAME:server'

@@ -1,21 +1,49 @@
-name: This a workflow title 
-on: [push] # When pushing to any branch then run this action
-# Env variable
+name: Inference Service Unit Testing and Build and Push Docker Image to Docker Hub
+
+on:
+  push:
+    branches:
+      - main
+
 env:
   DOCKER_USER: ${{secrets.DOCKERHUB_USERNAME}}
   DOCKER_PASSWORD: ${{secrets.DOCKERHUB_PASSWORD}}
   REPO_NAME: ${{secrets.DOCKERHUB_REPO}}
+
 jobs:
-  push-image-to-docker-hub:  # job name
-    runs-on: ubuntu-latest  # runner name : (ubuntu latest version) 
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.10" ]
     steps:
-    - uses: actions/checkout@v2 # first action : checkout source code
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Lint with pycodestyle
+        run: |
+          pycodestyle src test
+      - name: Test with pytest
+        run: |
+          PYTHONPATH=./:./src/ pytest test
+
+  push-image-to-docker-hub:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
     - name: docker login
-      run: | # log into docker hub account
+      run: | 
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD  
-    - name: Build the Docker auth image # push The image to the docker hub
+    - name: Build the Docker auth image
       run: docker build . --file AuthDockerfile --tag $DOCKER_USER/$REPO_NAME:auth_server
-    - name: Build the Docker server image # push The image to the docker hub
+    - name: Build the Docker server image
       run: docker build . --file ServerDockerfile --tag $DOCKER_USER/$REPO_NAME:server
     - name: Docker Push
       run: docker push $DOCKER_USER/$REPO_NAME:auth_server

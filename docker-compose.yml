@@ -7,16 +7,6 @@ services:
       dockerfile: ServerDockerfile
     ports:
       - 8000:8000
-  auth:
-    image: quay.io/keycloak/keycloak:21.0.1
-    container_name: auth
-    environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-    command:
-      - start-dev
-    ports:
-      - 8080:8080
   auth_server:
     container_name: auth_server
     build: 

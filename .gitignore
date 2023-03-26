@@ -1,2 +1,4 @@
 src/__pycache__
 src/auth/__pycache__
+src/server/__pycache__
+test/__pycache__

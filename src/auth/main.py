@@ -27,7 +27,7 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-@app.post("/get_user")
+@app.get("/get_user")
 async def get_user(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])

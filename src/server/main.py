@@ -31,12 +31,10 @@ app.add_middleware(
 auth_url = "http://auth_server:8500"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=auth_url + "/token")
 model_path = "models/pipeline.pkl"
-if model_path is None:
-    raise ValueError("The environment variable $MODEL_PATH is empty!")
 
 
 async def check_token(token: str = Depends(oauth2_scheme)):
-    post_response = requests.post(auth_url + "/get_user?token=" + token)
+    post_response = requests.get(auth_url + "/get_user?token=" + token)
     if post_response.status_code != 200:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

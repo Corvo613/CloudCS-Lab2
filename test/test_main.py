@@ -28,7 +28,7 @@ def init_test_client_with_auth(monkeypatch) -> TestClient:
     def mock_get_request(*args, **kwargs):
         response = FakeResponse(200)
         return response
-    
+
     init_test_client(monkeypatch)
     monkeypatch.setattr("requests.get", mock_get_request)
 
@@ -37,7 +37,7 @@ def init_test_client_with_auth(monkeypatch) -> TestClient:
 
 
 @pytest.fixture
-def init_test_client_without_auth(monkeypatch) -> TestClient:    
+def init_test_client_without_auth(monkeypatch) -> TestClient:
     def mock_get_request(*args, **kwargs):
         response = FakeResponse(401)
         return response
